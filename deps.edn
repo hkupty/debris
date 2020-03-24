@@ -6,7 +6,8 @@
   :runner
   {:extra-deps {com.cognitect/test-runner
                 {:git/url "https://github.com/cognitect-labs/test-runner"
-                 :sha "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}}
+                 :sha "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}
+                nubank/matcher-combinators {:mvn/version "1.5.1"}}
    :main-opts ["-m" "cognitect.test-runner"
                "-d" "test"]}
   :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "0.5.1"}}
