@@ -77,27 +77,25 @@
                 (vec raw))))
 
 (defn- serialize-numbers [number]
-  (let [str-repr (str number)]
+  (let [bin (.getBytes (str number) "UTF8")]
     (byte-array (concat
                   [num-prefix]
-                  (size-in-bytes (count str-repr))
-                  (map byte str-repr)))))
+                  (size-in-bytes (count bin))
+                  bin))))
 
 (defn- serialize-text [str-]
-  (byte-array (concat
+  (let [bin (.getBytes str- "UTF8")]
+    (byte-array (concat
                 [text-prefix]
-                (size-in-bytes (count str-))
-                (map byte str-))))
+                (size-in-bytes (count bin))
+                bin))))
 
 (defn- serialize-named [symbol-or-kw]
   (let [ns- (namespace symbol-or-kw)
         str-repr (str/join "/"
                            (cond->> [(name symbol-or-kw)]
                              (some? ns-) (cons ns-)))]
-    (byte-array (concat
-                  [text-prefix]
-                  (size-in-bytes (count str-repr))
-                  (map byte str-repr)))))
+    (serialize-text str-repr)))
 
 (defn- serialize-bool [bool]
   (byte-array [bool-prefix (byte 0x0) (byte 0x0) (byte 0x0) (byte 0x1) (byte (cond-> 0 bool inc))]))
@@ -208,4 +206,4 @@
       (seq nxt) (recur (deserialize-chunk nxt)))))
 
 (defmethod deserialize-value text-prefix [[_ _ this]]
-  (String. (into-array Byte/TYPE this)))
+  (String. (into-array Byte/TYPE this) "UTF8"))
